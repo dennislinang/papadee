@@ -8,22 +8,42 @@ h1 {
  color: #555555;
 }
 
+p {
+ font-size: 18px;
+}
+
+.double {
+ text-decoration: double underline #E67112;
+}
+
+.dotted {
+ text-decoration: underline dotted #2A9D8F;
+}
+
+.dashed {
+ text-decoration: dashed underline #E76F51;
+}
+
+.wavy {
+ text-decoration: wavy underline #62767E;
+}
+
 .ptext {
-  text-decoration: underline #FF4500;
-  font-size: 24px;
+ text-decoration: underline #FF4500;
+ font-size: 24px;
 }
 
 h2 {
-  text-decoration: overline;
-  color: #6BBE92;
+ text-decoration: overline;
+ color: #6BBE92;
 }
 
 h3 {
-  text-decoration: line-through;
-  color: #D83367;
+ text-decoration: line-through;
+ color: #D83367;
 }
 
 h4 {
-  text-decoration: underline overline;
-  color: #149EF2;
+ text-decoration: underline overline;
+ color: #149EF2;
 }
