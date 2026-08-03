@@ -1,10 +1,16 @@
 body {
-  background-color: #333333;
+ background-color: #F3F4F6;
+ color: #333333;
 }
 
 h1 {
-  text-decoration: underline;
-  color: #F28D35;
+ text-align: center;
+ color: #555555;
+}
+
+.ptext {
+  text-decoration: underline #FF4500;
+  font-size: 24px;
 }
 
 h2 {
