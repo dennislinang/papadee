@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Everyday Colors Palette</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f8f9fa;
+      color: #212529;
+      margin: 0;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 2rem auto;
+    }
+
+    h1 { margin-bottom: 0.5rem; }
+    p { color: #6c757d; margin-bottom: 1.5rem; }
+
+    .search-container {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+
+    #searchBar {
+      width: 100%;
+      max-width: 500px;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      border: 2px solid #ced4da;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    #searchBar:focus { border-color: #495057; }
+
+    #colorCount {
+      font-size: 0.9rem;
+      color: #6c757d;
+      margin-bottom: 1.5rem;
+    }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1.25rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .color-card {
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      border: 1px solid #e9ecef;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .color-swatch { height: 95px; width: 100%; }
+    .color-info { padding: 0.75rem; text-align: center; }
+    .color-name { font-weight: bold; font-size: 0.95rem; margin-bottom: 0.25rem; }
+    .color-hex {
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: #495057;
+      background-color: #f1f3f5;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Complete Everyday Colors Palette</h1>
+    <p>Comprehensive collection of everyday colors with instant search.</p>
+    <div class="search-container">
+      <input type="text" id="searchBar" placeholder="Search by name or hex (e.g. Neon, Turquoise, #40E...)" oninput="filterColors()">
+    </div>
+    <div id="colorCount">Showing colors</div>
+  </header>
+
+  <div class="color-grid" id="colorGrid"></div>
+
+  <script>
+    const colors = [
+      // TURQUOISE, TEAL & AQUA (1-25)
+      { name: "Classic Turquoise", hex: "#40E0D0" },
+      { name: "Turquoise Blue", hex: "#00FFEF" },
+      { name: "Pale Turquoise", hex: "#AFEEEE" },
+      { name: "Dark Turquoise", hex: "#00CED1" },
+      { name: "Medium Turquoise", hex: "#48D1CC" },
+      { name: "Bright Turquoise", hex: "#08E8DE" },
+      { name: "Sleeping Beauty Turquoise", hex: "#00A896" },
+      { name: "Persian Turquoise", hex: "#32C6A6" },
+      { name: "Teal Turquoise", hex: "#20B2AA" },
+      { name: "Caribbean Turquoise", hex: "#00C4B3" },
+      { name: "Tropical Turquoise", hex: "#00D2C2" },
+      { name: "Deep Turquoise", hex: "#158B83" },
+      { name: "Reef Turquoise", hex: "#00A896" },
+      { name: "Teal (Standard)", hex: "#008080" },
+      { name: "Deep Teal", hex: "#004D40" },
+      { name: "Soft Teal", hex: "#4DB6AC" },
+      { name: "Dark Teal", hex: "#003333" },
+      { name: "Aqua (True)", hex: "#00FFFF" },
+      { name: "Aquamarine", hex: "#7FFFD4" },
+      { name: "Deep Aquamarine", hex: "#40826D" },
+      { name: "Ocean Teal", hex: "#006666" },
+      { name: "Peacock Teal", hex: "#005F73" },
+      { name: "Bermuda Turquoise", hex: "#1B8A9D" },
+      { name: "Lagoon Aqua", hex: "#00A3A6" },
+      { name: "Sea Glass Aqua", hex: "#99E5D0" },
+
+      // PERIWINKLE, MAUVE & LAVENDER (26-55)
+      { name: "Periwinkle (Standard)", hex: "#CCCCFF" },
+      { name: "Soft Periwinkle", hex: "#C5C6E7" },
+      { name: "Vivid Periwinkle", hex: "#6C5CE7" },
+      { name: "Deep Periwinkle", hex: "#4B4E87" },
+      { name: "Dusk Periwinkle", hex: "#7C83BC" },
+      { name: "Wild Periwinkle", hex: "#A4A6DB" },
+      { name: "Periwinkle Blue", hex: "#8F99FB" },
+      { name: "Lavender (True)", hex: "#E6E6FA" },
+      { name: "Dusty Lavender", hex: "#AC92A6" },
+      { name: "French Lavender", hex: "#967BB6" },
+      { name: "Lavender Blush", hex: "#FFF0F5" },
+      { name: "Deep Lavender", hex: "#8A60A0" },
+      { name: "Lilac (Classic)", hex: "#C8A2C8" },
+      { name: "Vivid Lilac", hex: "#B666D2" },
+      { name: "Pale Lilac", hex: "#DCD0FF" },
+      { name: "Mauve (Classic)", hex: "#E0B0FF" },
+      { name: "Mauve Taupe", hex: "#915F6D" },
+      { name: "Mauve Rose", hex: "#B57EDC" },
+      { name: "Deep Mauve", hex: "#674C47" },
+      { name: "Dusty Mauve", hex: "#AE8B9C" },
+      { name: "Wisteria", hex: "#C9A0DC" },
+      { name: "Heather Purple", hex: "#B7C3D0" },
+      { name: "Orchid Pink", hex: "#F2BDCD" },
+      { name: "Thistle", hex: "#D8BFD8" },
+      { name: "Dark Thistle", hex: "#A38883" },
+      { name: "Heliotrope", hex: "#DF73FF" },
+      { name: "Iris Purple", hex: "#5A4FCF" },
+      { name: "Violet Mist", hex: "#D4C1EC" },
+      { name: "Sweet Pea", hex: "#DDA0DD" },
+      { name: "Amethyst Bloom", hex: "#A27B5C" },
+
+      // CORAL, SALMON & PEACH (56-85)
+      { name: "Coral (Standard)", hex: "#FF7F50" },
+      { name: "Coral Pink", hex: "#F88379" },
+      { name: "Living Coral", hex: "#FF6F61" },
+      { name: "Deep Coral", hex: "#E55B4C" },
+      { name: "Peach Coral", hex: "#F89880" },
+      { name: "Coral Reef", hex: "#FD7C6E" },
+      { name: "Burnished Coral", hex: "#D05A3F" },
+      { name: "Salmon Pink", hex: "#FA8072" },
+      { name: "Light Salmon", hex: "#FFA07A" },
+      { name: "Dark Salmon", hex: "#E9967A" },
+      { name: "Salmon Rose", hex: "#E97B7A" },
+      { name: "Peach (Classic)", hex: "#FFCBA4" },
+      { name: "Peach Puff", hex: "#FFDAB9" },
+      { name: "Peach Amber", hex: "#FB9F68" },
+      { name: "Sweet Peach", hex: "#FFB07C" },
+      { name: "Apricot", hex: "#FBCEB1" },
+      { name: "Deep Apricot", hex: "#ED8255" },
+      { name: "Melon", hex: "#FEBAAD" },
+      { name: "Papaya Whip", hex: "#FFEFD5" },
+      { name: "Guava", hex: "#FF6262" },
+      { name: "Nectarine", hex: "#FF9866" },
+      { name: "Flamingo Pink", hex: "#FC8EAC" },
+      { name: "Watermelon", hex: "#FC6C85" },
+      { name: "Sunset Coral", hex: "#F26B5B" },
+      { name: "Blush Coral", hex: "#E0837A" },
+      { name: "Sunkissed Peach", hex: "#F3A17C" },
+      { name: "Rosy Salmon", hex: "#D97270" },
+      { name: "Mango Coral", hex: "#FF8450" },
+      { name: "Persimmon Coral", hex: "#E86100" },
+      { name: "Canteloupe Blush", hex: "#F69D71" },
+
+      // MINT, SEAFOAM & LIGHT GREENS (86-115)
+      { name: "Mint (Classic)", hex: "#3EB489" },
+      { name: "Spearmint", hex: "#1C7847" },
+      { name: "Spearmint Green", hex: "#1B8A5A" },
+      { name: "Vivid Mint", hex: "#00FF87" },
+      { name: "Peppermint", hex: "#DDEEED" },
+      { name: "Pale Mint", hex: "#D8F3DC" },
+      { name: "Mint Frost", hex: "#E2F4EC" },
+      { name: "Mint Cream", hex: "#F5FFFA" },
+      { name: "Seafoam Green", hex: "#9FE2BF" },
+      { name: "Deep Seafoam", hex: "#3CA682" },
+      { name: "Pale Seafoam", hex: "#C7F6D4" },
+      { name: "Pistachio", hex: "#A9BA9D" },
+      { name: "Pistachio Shell", hex: "#D4E157" },
+      { name: "Pistachio Cream", hex: "#C5D1A5" },
+      { name: "Sage", hex: "#9CAF88" },
+      { name: "Sage Leaf", hex: "#778A71" },
+      { name: "Deep Sage", hex: "#405342" },
+      { name: "Eucalyptus", hex: "#8FBC8F" },
+      { name: "Eucalyptus Shadow", hex: "#5E7266" },
+      { name: "Celadon", hex: "#ACE1AF" },
+      { name: "Tea Green", hex: "#D0F0C0" },
+      { name: "Green Tea", hex: "#B5C99A" },
+      { name: "Matcha", hex: "#A3B86C" },
+      { name: "Key Lime", hex: "#E8F48C" },
+      { name: "Lime Mint", hex: "#6FFF90" },
+      { name: "Foam Green", hex: "#D0F0C0" },
+      { name: "Coastal Meadow", hex: "#8BB174" },
+      { name: "Dewdrop Green", hex: "#C1E1C1" },
+      { name: "Spring Mint", hex: "#B2EC5D" },
+      { name: "Icy Green", hex: "#E0F2E9" },
+
+      // REDS, DEEP PINKS & WINES (116-175)
+      { name: "Crimson (Classic)", hex: "#DC143C" },
+      { name: "Burgundy", hex: "#800020" },
+      { name: "Wine", hex: "#722F37" },
+      { name: "Blush Pink", hex: "#DE5D83" },
+      { name: "Rose Gold", hex: "#B76E79" },
+      { name: "Ruby", hex: "#E0115F" },
+      { name: "Raspberry", hex: "#C30B4E" },
+      { name: "Cerise", hex: "#DE3163" },
+      { name: "Sangria", hex: "#92000A" },
+      { name: "Bubblegum", hex: "#FFC1CC" },
+      { name: "Rose Quartz", hex: "#F7CAC9" },
+      { name: "Amaranth", hex: "#E52B50" },
+      { name: "Vermilion", hex: "#E34234" },
+      { name: "Rosewood", hex: "#65000B" },
+      { name: "Garnet", hex: "#733635" },
+      { name: "Cherry Red", hex: "#D2042D" },
+      { name: "Strawberry", hex: "#FC5A8D" },
+      { name: "Merlot", hex: "#730025" },
+      { name: "Claret", hex: "#7F1734" },
+      { name: "Rouge", hex: "#A23B72" },
+      { name: "Cotton Candy", hex: "#FFBCD9" },
+      { name: "Ballet Slipper", hex: "#F7C8DA" },
+      { name: "Carnation Pink", hex: "#FFA6C9" },
+      { name: "Magenta (True)", hex: "#FF007F" },
+      { name: "Punch Pink", hex: "#EC5578" },
+      { name: "Brick Red", hex: "#CB4154" },
+      { name: "Bordeaux", hex: "#5C061C" },
+      { name: "Candy Apple", hex: "#FF0800" },
+      { name: "Cranberry", hex: "#9E003A" },
+      { name: "Fiesta Red", hex: "#DD4132" },
+      { name: "Carnelian", hex: "#B31B1B" },
+      { name: "Scarlet (True)", hex: "#FF2400" },
+      { name: "Mahogany Red", hex: "#4C0005" },
+      { name: "Lipstick Red", hex: "#C01030" },
+      { name: "French Rose", hex: "#F64A8A" },
+      { name: "Fandango Pink", hex: "#DE5285" },
+      { name: "Tea Rose", hex: "#F4C2C2" },
+      { name: "Hot Magenta", hex: "#FF1DCE" },
+      { name: "Brink Pink", hex: "#FB607F" },
+      { name: "Rustic Red", hex: "#311010" },
+      { name: "Cabernet", hex: "#4D0011" },
+      { name: "Titian Red", hex: "#D14A28" },
+      { name: "Pomegranate", hex: "#660910" },
+      { name: "Dusty Rose", hex: "#DCAE96" },
+      { name: "Blood Orange", hex: "#CC1100" },
+      { name: "Hibiscus", hex: "#B6316C" },
+      { name: "Peony Pink", hex: "#EAEAAB" },
+      { name: "Wild Rose", hex: "#E06F8B" },
+      { name: "Dahlia Red", hex: "#A81C39" },
+      { name: "Dragonfruit", hex: "#E1127C" },
+      { name: "Black Cherry", hex: "#420313" },
+      { name: "Pink Frosting", hex: "#F7A8B8" },
+      { name: "Berry Crush", hex: "#A50B5E" },
+      { name: "Red Clay", hex: "#9C4223" },
+      { name: "Chili Pepper", hex: "#9B111E" },
+      { name: "Paprika Red", hex: "#8D021F" },
+      { name: "Cayenne", hex: "#941100" },
+      { name: "Crimson Velvet", hex: "#7E0023" },
+      { name: "Sugar Plum", hex: "#914E75" },
+      { name: "Rosé", hex: "#FFC0C7" },
+
+      // BLUES & PURPLES (176-235)
+      { name: "Cobalt Blue", hex: "#0047AB" },
+      { name: "Sapphire", hex: "#0F52BA" },
+      { name: "Baby Blue", hex: "#81D4FA" },
+      { name: "Psychedelic Purple", hex: "#DF00FF" },
+      { name: "Indigo (True)", hex: "#4B0082" },
+      { name: "Cerulean", hex: "#007BA7" },
+      { name: "Ultramarine", hex: "#0403E0" },
+      { name: "Tiffany Blue", hex: "#0ABAB5" },
+      { name: "Electric Blue", hex: "#7DF9FF" },
+      { name: "Ice Blue", hex: "#AFEEEE" },
+      { name: "Carolina Blue", hex: "#56A0D3" },
+      { name: "Maya Blue", hex: "#73C2FB" },
+      { name: "Oxford Blue", hex: "#002147" },
+      { name: "Yale Blue", hex: "#0F4D92" },
+      { name: "Air Force Blue", hex: "#5D8AA8" },
+      { name: "Amethyst", hex: "#9966CC" },
+      { name: "Grape Purple", hex: "#6F2DA8" },
+      { name: "Byzantium", hex: "#702963" },
+      { name: "Denim Blue", hex: "#1560BD" },
+      { name: "Ocean Blue", hex: "#0077BE" },
+      { name: "Plum (Classic)", hex: "#8E4585" },
+      { name: "Eggplant", hex: "#614051" },
+      { name: "Mulberry", hex: "#C54B8C" },
+      { name: "Royal Blue (True)", hex: "#4169E1" },
+      { name: "Cyan (True)", hex: "#00B7EB" },
+      { name: "Navy Blue (True)", hex: "#000080" },
+      { name: "Pacific Blue", hex: "#1CA9C9" },
+      { name: "Glaucous", hex: "#6082B6" },
+      { name: "Violet (Spectral)", hex: "#8F00FF" },
+      { name: "Prussian Blue", hex: "#003153" },
+      { name: "Lapis Lazuli", hex: "#26619C" },
+      { name: "Egyptian Blue", hex: "#1034A6" },
+      { name: "Cornflower (True)", hex: "#6495ED" },
+      { name: "Celeste", hex: "#B2FFFF" },
+      { name: "Robin Egg Blue", hex: "#00CCCC" },
+      { name: "Sky Blue (True)", hex: "#87CEEB" },
+      { name: "Turkish Blue", hex: "#00A2E8" },
+      { name: "Space Cadet", hex: "#1D2951" },
+      { name: "Tyrian Purple", hex: "#66023C" },
+      { name: "Boysenberry", hex: "#873260" },
+      { name: "Orchid (True)", hex: "#DA70D6" },
+      { name: "Raisin Purple", hex: "#240935" },
+      { name: "Midnight Purple", hex: "#280137" },
+      { name: "Violet Blue", hex: "#324AB2" },
+      { name: "Independence Blue", hex: "#4C516D" },
+      { name: "Majorelle Blue", hex: "#6050DC" },
+      { name: "Palatinate Purple", hex: "#682860" },
+      { name: "Plum Jam", hex: "#5B2C6F" },
+      { name: "Glacier Blue", hex: "#78B1C8" },
+      { name: "Arctic Blue", hex: "#C6E6F2" },
+      { name: "Deep Ocean", hex: "#002D42" },
+      { name: "Tidal Wave", hex: "#006989" },
+      { name: "Horizon Blue", hex: "#A6C7E2" },
+      { name: "Twilight Sky", hex: "#363B59" },
+      { name: "Dusk Blue", hex: "#4E598C" },
+      { name: "Dawn Blue", hex: "#D4E09B" },
+      { name: "Hydrangea Blue", hex: "#6888C5" },
+      { name: "Indigo Wash", hex: "#41506B" },
+      { name: "Storm Blue", hex: "#495867" },
+      { name: "Blackberry Purple", hex: "#2E1C2B" },
+
+      // GREENS (236-295)
+      { name: "Emerald", hex: "#50C878" },
+      { name: "Olive Green", hex: "#808000" },
+      { name: "Army / Camo", hex: "#4B5320" },
+      { name: "Jade", hex: "#00A86B" },
+      { name: "Kelly Green", hex: "#4CBB17" },
+      { name: "Hunter Green", hex: "#355E3B" },
+      { name: "Moss Green", hex: "#8A9A5B" },
+      { name: "Pine Green", hex: "#01796F" },
+      { name: "Viridian", hex: "#40826D" },
+      { name: "Fern Green", hex: "#4F7942" },
+      { name: "Malachite", hex: "#0BDA51" },
+      { name: "Avocado", hex: "#568203" },
+      { name: "Basil", hex: "#5C9E54" },
+      { name: "Pickle Green", hex: "#597D35" },
+      { name: "Clover", hex: "#387C44" },
+      { name: "Pear Green", hex: "#D1E231" },
+      { name: "Spruce", hex: "#2C5D4B" },
+      { name: "Verdigris", hex: "#43B3AE" },
+      { name: "Mantis Green", hex: "#74C365" },
+      { name: "Forest Green (True)", hex: "#228B22" },
+      { name: "Lime Green (True)", hex: "#32CD32" },
+      { name: "Shamrock Green", hex: "#009E60" },
+      { name: "Sea Green (Deep)", hex: "#006994" },
+      { name: "Jungle Green", hex: "#29AB87" },
+      { name: "Olive Drab", hex: "#6B8E23" },
+      { name: "Amazon Green", hex: "#3B7A57" },
+      { name: "Artichoke", hex: "#8F9779" },
+      { name: "Laurel Green", hex: "#A9BA9D" },
+      { name: "Reseda Green", hex: "#6C7C59" },
+      { name: "Feldgrau", hex: "#4D5D53" },
+      { name: "Merton Green", hex: "#004B49" },
+      { name: "Brunswick Green", hex: "#1B4D3E" },
+      { name: "Cadmium Green", hex: "#006B3C" },
+      { name: "Volt Green", hex: "#CEFF00" },
+      { name: "Electric Lime", hex: "#CCFF00" },
+      { name: "Absinthe", hex: "#7FBF3F" },
+      { name: "Sap Green", hex: "#507D2A" },
+      { name: "Deep Moss", hex: "#354A21" },
+      { name: "Pine Needle", hex: "#234F1E" },
+      { name: "Willow Green", hex: "#90A070" },
+      { name: "Wintergreen", hex: "#20B2AA" },
+      { name: "Cactus", hex: "#5B6F55" },
+      { name: "Green Screen", hex: "#00FF02" },
+      { name: "Green Sheen", hex: "#6EAEA1" },
+      { name: "Medium Sea Green", hex: "#3CB371" },
+      { name: "Myrtle Green", hex: "#21421E" },
+      { name: "Cypress", hex: "#2E3B22" },
+      { name: "Evergreen", hex: "#052F18" },
+      { name: "Redwood Foliage", hex: "#3A4B32" },
+      { name: "Autumn Leaf Green", hex: "#738626" },
+      { name: "Dried Moss", hex: "#66704A" },
+      { name: "Palm Leaf", hex: "#365E32" },
+      { name: "Wasabi Green", hex: "#78A540" },
+      { name: "Romaine Lettuce", hex: "#63A355" },
+      { name: "Zucchini Green", hex: "#294723" },
+      { name: "Thyme Green", hex: "#4E6E58" },
+      { name: "Ocean Kelp", hex: "#2D4739" },
+      { name: "Bamboo Green", hex: "#7F9A65" },
+      { name: "Peridot Green", hex: "#8B9A00" },
+      { name: "Aged Bronze Green", hex: "#4B5332" },
+
+      // OCHRE, AMBER, YELLOWS & ORANGES (296-365)
+      { name: "Ochre (Standard)", hex: "#CC7722" },
+      { name: "Yellow Ochre", hex: "#CB9D06" },
+      { name: "Golden Ochre", hex: "#C68812" },
+      { name: "Burnt Ochre", hex: "#BB4E00" },
+      { name: "Amber (Classic)", hex: "#FFBF00" },
+      { name: "Baltic Amber", hex: "#E28B00" },
+      { name: "Raw Amber", hex: "#A0630C" },
+      { name: "Dark Amber", hex: "#883000" },
+      { name: "Warm Amber", hex: "#CF8810" },
+      { name: "Mustard", hex: "#FFDB58" },
+      { name: "Terracotta", hex: "#E2725B" },
+      { name: "Saffron", hex: "#F4C430" },
+      { name: "Rust", hex: "#B7410E" },
+      { name: "Burnt Orange", hex: "#CC5500" },
+      { name: "Tangerine", hex: "#F28500" },
+      { name: "Marigold", hex: "#EAA221" },
+      { name: "Honey", hex: "#EC9706" },
+      { name: "Maize / Corn", hex: "#FBEC5D" },
+      { name: "Butter Yellow", hex: "#FFFD74" },
+      { name: "Lemon Yellow", hex: "#FFF700" },
+      { name: "Sunflower", hex: "#FFDA03" },
+      { name: "Pumpkin Orange", hex: "#FF7518" },
+      { name: "Ginger", hex: "#B06500" },
+      { name: "Wheat", hex: "#F5DEB3" },
+      { name: "Vanilla", hex: "#F3E5AB" },
+      { name: "Buttercream", hex: "#EFE0B9" },
+      { name: "Champagne", hex: "#F7E7CE" },
+      { name: "Mango", hex: "#FFC324" },
+      { name: "Persimmon", hex: "#EC5800" },
+      { name: "Clementine", hex: "#E96E00" },
+      { name: "Safety Orange", hex: "#FF5F00" },
+      { name: "Goldenrod (True)", hex: "#DAA520" },
+      { name: "Flax", hex: "#EEDC82" },
+      { name: "Canary Yellow", hex: "#FFEF00" },
+      { name: "Daffodil", hex: "#FFFF31" },
+      { name: "Blonde", hex: "#FAF0BE" },
+      { name: "Cream Puff", hex: "#FFE8BF" },
+      { name: "Gold Foil", hex: "#BD9B16" },
+      { name: "Marmalade", hex: "#D16002" },
+      { name: "Tiger Orange", hex: "#E08214" },
+      { name: "Sienna (Natural)", hex: "#882D17" },
+      { name: "Alloy Orange", hex: "#C46210" },
+      { name: "Cadmium Yellow", hex: "#FFF600" },
+      { name: "Chartreuse", hex: "#DFFF00" },
+      { name: "Cinnabar", hex: "#E34234" },
+      { name: "Sunset Orange", hex: "#FD5E53" },
+      { name: "Desert Sand", hex: "#EDC9AF" },
+      { name: "Carrot Orange", hex: "#ED9121" },
+      { name: "School Bus Yellow", hex: "#FFD800" },
+      { name: "Titanium Yellow", hex: "#EEE600" },
+      { name: "Macaroni Yellow", hex: "#FFBD88" },
+      { name: "Atomic Tangerine", hex: "#FF9966" },
+      { name: "Bittersweet Orange", hex: "#FE6F5E" },
+      { name: "Rajah", hex: "#FBAB60" },
+      { name: "Honey Mustard", hex: "#E3A857" },
+      { name: "Banana Yellow", hex: "#FFE135" },
+      { name: "Butterscotch", hex: "#E39B3B" },
+      { name: "Marzipan", hex: "#F8E0B1" },
+      { name: "Cantaloupe Yellow", hex: "#FFA631" },
+      { name: "Dijon Mustard", hex: "#C49A45" },
+      { name: "Apple Cider", hex: "#C67D33" },
+      { name: "Cardamom", hex: "#CBB38B" },
+      { name: "Nutmeg", hex: "#815B38" },
+      { name: "Wheat Straw", hex: "#D8C078" },
+      { name: "Tiger's Eye", hex: "#B56D1E" },
+      { name: "Aged Brass", hex: "#A38A3E" },
+
+      // BROWNS & EARTH TONES (366-460)
+      { name: "Coffee", hex: "#6F4E37" },
+      { name: "Cinnamon", hex: "#D2691E" },
+      { name: "Brown (Standard)", hex: "#964B00" },
+      { name: "Raw Umber", hex: "#826644" },
+      { name: "Burnt Sienna", hex: "#E97451" },
+      { name: "Chestnut", hex: "#954535" },
+      { name: "Sepia", hex: "#704214" },
+      { name: "Mahogany", hex: "#C04000" },
+      { name: "Chocolate", hex: "#7B3F00" },
+      { name: "Espresso", hex: "#4B382A" },
+      { name: "Hazelnut", hex: "#AE9F80" },
+      { name: "Pecan Brown", hex: "#482D19" },
+      { name: "Walnut", hex: "#773F1A" },
+      { name: "Caramel", hex: "#C68E17" },
+      { name: "Toffee", hex: "#835C3B" },
+      { name: "Taupe (Classic)", hex: "#483C32" },
+      { name: "Khaki (True)", hex: "#C3B091" },
+      { name: "Camel", hex: "#C19A6B" },
+      { name: "Peanut", hex: "#795D31" },
+      { name: "Leather", hex: "#917256" },
+      { name: "Mud", hex: "#70543E" },
+      { name: "Saddle Brown", hex: "#8B4513" },
+      { name: "Fawn", hex: "#E5AA70" },
+      { name: "Cognac", hex: "#9A463D" },
+      { name: "Beaver Brown", hex: "#9F8170" },
+      { name: "Cocoa Dust", hex: "#D2691E" },
+      { name: "Dark Chocolate", hex: "#2C1608" },
+      { name: "Bole", hex: "#79443B" },
+      { name: "Sienna (Burnt)", hex: "#A0522D" },
+      { name: "Sandy Brown", hex: "#F4A460" },
+      { name: "Raw Sienna", hex: "#D68A59" },
+      { name: "Copper Brown", hex: "#996515" },
+      { name: "Mocha", hex: "#3C280D" },
+      { name: "Maple Wood", hex: "#C95A00" },
+      { name: "Buff Brown", hex: "#F0DC82" },
+      { name: "Brownie", hex: "#3D2314" },
+      { name: "Chocolate Truffle", hex: "#2B1B17" },
+      { name: "Molasses", hex: "#321E17" },
+      { name: "Soy Sauce", hex: "#2D1E18" },
+      { name: "Tree Bark", hex: "#503D33" },
+      { name: "Mulberry Bark", hex: "#5C4033" },
+      { name: "Dried Leaf", hex: "#996B43" },
+      { name: "Roasted Barley", hex: "#543D2B" },
+      { name: "Desert Dust", hex: "#D7B596" },
+      { name: "Clay", hex: "#B66A50" },
+      { name: "Riverbed", hex: "#625750" },
+      { name: "Mudstone", hex: "#4C3D35" },
+      { name: "Corduroy Brown", hex: "#60412B" },
+      { name: "Burlap", hex: "#A89A7C" },
+      { name: "Suede", hex: "#8D7761" },
+      { name: "Tan Leather", hex: "#A07855" },
+      { name: "Aged Leather", hex: "#4A3525" },
+      { name: "Rawhide", hex: "#BD9A7A" },
+      { name: "Saddle Tan", hex: "#8B5A2B" },
+      { name: "Cardboard", hex: "#A68B6D" },
+      { name: "Cork", hex: "#BC8A5F" },
+      { name: "Rusted Iron", hex: "#8B3103" },
+      { name: "Sesame", hex: "#D0C0A6" },
+      { name: "Chia Seed", hex: "#322D29" },
+      { name: "Oat", hex: "#DFC8A8" },
+      { name: "Toasted Coconut", hex: "#926F4A" },
+      { name: "Baked Earth", hex: "#A2583A" },
+      { name: "Sandstone", hex: "#D9A07B" },
+      { name: "Peanut Shell", hex: "#C3A380" },
+      { name: "Acorn", hex: "#7E5229" },
+      { name: "Cacao", hex: "#4D3327" },
+      { name: "Earthy Taupe", hex: "#7A6A60" },
+      { name: "Pine Cone", hex: "#432D1D" },
+      { name: "Ground Cinnamon", hex: "#7B3F11" },
+      { name: "Rich Walnut", hex: "#382415" },
+      { name: "Dune Sand", hex: "#E3C5A8" },
+      { name: "Smoky Quartz", hex: "#514846" },
+      { name: "Fossil Brown", hex: "#786D66" },
+      { name: "Trench Mud", hex: "#4B4237" },
+      { name: "Mushroom", hex: "#BDAC98" },
+      { name: "Porcini", hex: "#8A6F58" },
+      { name: "Charred Wood", hex: "#231F20" },
+      { name: "Almond Shell", hex: "#D2B48C" },
+      { name: "Tawny", hex: "#CD5700" },
+      { name: "Russet", hex: "#80461B" },
+      { name: "Umbrage", hex: "#43322B" },
+      { name: "Burnt Caramel", hex: "#A05A12" },
+      { name: "Saffron Thread", hex: "#E34A00" },
+      { name: "Curry Powder", hex: "#C89D13" },
+      { name: "Turmeric", hex: "#E09500" },
+
+      // SLATE, GRAYS, NEUTRALS & URBAN (461-600)
+      { name: "Slate (Classic)", hex: "#708090" },
+      { name: "Steel Blue Slate", hex: "#4682B4" },
+      { name: "Light Slate Gray", hex: "#778899" },
+      { name: "Dark Slate Gray", hex: "#2F4F4F" },
+      { name: "Dusty Blue Gray", hex: "#6C7A89" },
+      { name: "Slate Shingle", hex: "#3B424C" },
+      { name: "Coastal Fog", hex: "#9FB1BC" },
+      { name: "Beige", hex: "#F5F5DC" },
+      { name: "Sand", hex: "#C2B280" },
+      { name: "Platinum", hex: "#E5E4E2" },
+      { name: "Charcoal", hex: "#36454F" },
+      { name: "Battleship Gray", hex: "#848482" },
+      { name: "Ivory", hex: "#FFFFF0" },
+      { name: "Cool Gray", hex: "#D3D3D3" },
+      { name: "Jet Black", hex: "#1B1B1B" },
+      { name: "Cream", hex: "#FFFDD0" },
+      { name: "Ecru", hex: "#C2B280" },
+      { name: "Gunmetal", hex: "#2A3439" },
+      { name: "Pewter", hex: "#8E8E8E" },
+      { name: "Onyx", hex: "#353839" },
+      { name: "Bone White", hex: "#E3DAC9" },
+      { name: "Alabaster", hex: "#F2F0E6" },
+      { name: "Ash Gray", hex: "#B2BEB5" },
+      { name: "Warm Gray", hex: "#807872" },
+      { name: "Graphite", hex: "#383838" },
+      { name: "Obsidian", hex: "#0B0B0B" },
+      { name: "Pearl White", hex: "#EAE0C8" },
+      { name: "Bronze Metallic", hex: "#CD7F32" },
+      { name: "Copper Metallic", hex: "#B87333" },
+      { name: "Brass Metallic", hex: "#B5A642" },
+      { name: "Titanium Metal", hex: "#878681" },
+      { name: "Eggshell White", hex: "#F0EAD6" },
+      { name: "Smoke Gray", hex: "#738276" },
+      { name: "Fog Gray", hex: "#D5D6EA" },
+      { name: "Cloud White", hex: "#F5F5F5" },
+      { name: "Antique White", hex: "#FAEBD7" },
+      { name: "Parchment", hex: "#F1E9D2" },
+      { name: "Isabelline", hex: "#F4F0EA" },
+      { name: "Payne's Gray", hex: "#536878" },
+      { name: "Storm Cloud", hex: "#4F5D65" },
+      { name: "Thunderhead", hex: "#3D434A" },
+      { name: "Volcanic Ash", hex: "#5C5856" },
+      { name: "Gravel", hex: "#88837D" },
+      { name: "Pumice", hex: "#C4C4C2" },
+      { name: "Glacier Ice", hex: "#D6EAF8" },
+      { name: "Denim Textile", hex: "#2B3A4A" },
+      { name: "Tweed Gray", hex: "#5E646A" },
+      { name: "Canvas Neutral", hex: "#D8CFBC" },
+      { name: "Satin White", hex: "#F7F7F7" },
+      { name: "Linen", hex: "#FAF0E6" },
+      { name: "Pavement", hex: "#4A4A4A" },
+      { name: "Cement", hex: "#A5A5A5" },
+      { name: "Concrete", hex: "#B0B0B0" },
+      { name: "Mortar", hex: "#8C8C88" },
+      { name: "Terracotta Tile", hex: "#C85A32" },
+      { name: "Blackboard", hex: "#22252A" },
+      { name: "Newspaper Gray", hex: "#DCDCDC" },
+      { name: "Pencil Lead", hex: "#434343" },
+      { name: "Cast Iron", hex: "#303030" },
+      { name: "Brushed Nickel", hex: "#8F8F8F" },
+      { name: "Sterling Silver", hex: "#E0E0E0" },
+      { name: "Polished Chrome", hex: "#F2F2F2" },
+      { name: "Alexandrite Gem", hex: "#2C5D63" },
+      { name: "Moonstone", hex: "#D6E4E5" },
+      { name: "Onyx Black", hex: "#0F0F0F" },
+      { name: "Zinc Gray", hex: "#7B8A8B" },
+      { name: "Stainless Steel", hex: "#D1D5DB" },
+      { name: "Muted Nickel", hex: "#A3A8B0" },
+      { name: "Wrought Iron", hex: "#1A1A1A" },
+      { name: "Charcoal Dust", hex: "#2B2B2B" },
+      { name: "Flint Gray", hex: "#6F6D6D" },
+      { name: "Granite", hex: "#676767" },
+      { name: "Basalt", hex: "#2F3234" },
+      { name: "Shale", hex: "#4E5258" },
+      { name: "Limestone", hex: "#E2DFC8" },
+      { name: "Chalk White", hex: "#F6F6F4" },
+      { name: "Milk White", hex: "#FEFDF8" },
+      { name: "Porcelain White", hex: "#FFFEFA" },
+      { name: "Seashell", hex: "#FFF5EE" },
+      { name: "Oatmeal Neutral", hex: "#E3D8C8" },
+      { name: "Putty", hex: "#BEB3A3" },
+      { name: "Seaglass Gray", hex: "#CCE3DE" },
+      { name: "Shadow Gray", hex: "#5A5D64" },
+      { name: "Iron Ore", hex: "#383635" },
+      { name: "Gunmetal Shimmer", hex: "#343A40" },
+      { name: "Anodized Aluminum", hex: "#8E9A9E" },
+      { name: "Aged Silver", hex: "#A8A8A8" },
+      { name: "Frosting White", hex: "#FFFFFF" },
+      { name: "Midnight Shadow", hex: "#12131C" },
+      { name: "Abyss Black", hex: "#050505" },
+      { name: "Pitch Black", hex: "#000000" },
+      { name: "Vantablack Shade", hex: "#010101" },
+      { name: "True Charcoal", hex: "#212121" },
+      { name: "Marshmallow White", hex: "#F9F6EF" },
+      { name: "Marshmallow Soft", hex: "#FFFDF7" },
+      { name: "Cotton Gray", hex: "#EAEAEA" },
+      { name: "Silver Chalice", hex: "#ACACAC" },
+      { name: "Aluminum Gray", hex: "#A9A9A9" },
+      { name: "Carbon Black", hex: "#131313" },
+      { name: "Soot Black", hex: "#161616" },
+      { name: "Raven Black", hex: "#050308" },
+
+      // METALLIC & GEM FINISHES (601-620)
+      { name: "Rose Gold Lustre", hex: "#E0A96D" },
+      { name: "Champagne Gold", hex: "#F1E5AC" },
+      { name: "Antique Copper", hex: "#C35831" },
+      { name: "Raw Bronze", hex: "#8C5E36" },
+      { name: "Aged Brass Finish", hex: "#C5A059" },
+      { name: "Polished Brass", hex: "#E5C158" },
+      { name: "Burnished Gold", hex: "#A87023" },
+      { name: "Deep Ruby Gem", hex: "#9B111E" },
+      { name: "Sapphire Gem", hex: "#0F52BA" },
+      { name: "Emerald Gem", hex: "#00A86B" },
+      { name: "Amethyst Gem", hex: "#9966CC" },
+      { name: "Topaz Yellow", hex: "#FFC87C" },
+      { name: "Citrine", hex: "#E4D00A" },
+      { name: "Garnet Gem", hex: "#733635" },
+      { name: "Tanzanite", hex: "#4B4080" },
+      { name: "Tourmaline Pink", hex: "#863053" },
+      { name: "Spinel Red", hex: "#A20021" },
+      { name: "Sunstone", hex: "#E37036" },
+      { name: "Bloodstone", hex: "#2E473B" },
+      { name: "Carnelian Gem", hex: "#B31B1B" },
+
+      // NEON & HIGH-VIBRANCY ACCENTS (621-636)
+      { name: "Neon Green", hex: "#39FF14" },
+      { name: "Neon Pink", hex: "#FF6EC7" },
+      { name: "Neon Blue", hex: "#1F51FF" },
+      { name: "Neon Yellow", hex: "#CCFF00" },
+      { name: "Neon Orange", hex: "#FF5F1F" },
+      { name: "Neon Purple", hex: "#9D00FF" },
+      { name: "Neon Red", hex: "#FF073A" },
+      { name: "Neon Cyan", hex: "#00E5FF" },
+      { name: "Neon Lime", hex: "#76FF03" },
+      { name: "Neon Magenta", hex: "#FF007F" },
+      { name: "Neon Amber", hex: "#FFBF00" },
+      { name: "Neon Violet", hex: "#8B00FF" },
+      { name: "Neon Turquoise", hex: "#00F5D4" },
+      { name: "Neon Coral", hex: "#FF4081" },
+      { name: "Neon Mint", hex: "#00FFAB" },
+      { name: "Neon Gold", hex: "#FFD700" }
+    ];
+
+    const grid = document.getElementById('colorGrid');
+    const countDisplay = document.getElementById('colorCount');
+
+    function displayColors(items) {
+      grid.innerHTML = '';
+      items.forEach(color => {
+        const card = document.createElement('div');
+        card.className = 'color-card';
+        card.innerHTML = `
+          <div class="color-swatch" style="background-color: ${color.hex};"></div>
+          <div class="color-info">
+            <div class="color-name">${color.name}</div>
+            <div class="color-hex">${color.hex}</div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterColors() {
+      const query = document.getElementById('searchBar').value.toLowerCase().trim();
+      const filtered = colors.filter(c => 
+        c.name.toLowerCase().includes(query) || 
+        c.hex.toLowerCase().includes(query)
+      );
+      
+      countDisplay.innerText = `Showing ${filtered.length} of ${colors.length} colors`;
+      displayColors(filtered);
+    }
+
+    // Initial render
+    countDisplay.innerText = `Showing ${colors.length} colors`;
+    displayColors(colors);
+  </script>
+
+</body>
+</html>

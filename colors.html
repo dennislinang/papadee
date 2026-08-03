@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS Named Colors Palette</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f8f9fa;
+      color: #212529;
+      margin: 0;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 2rem auto;
+    }
+
+    h1 { margin-bottom: 0.5rem; }
+    p { color: #6c757d; margin-bottom: 1.5rem; }
+
+    .search-container {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+
+    #searchBar {
+      width: 100%;
+      max-width: 500px;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      border: 2px solid #ced4da;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    #searchBar:focus { border-color: #495057; }
+
+    #colorCount {
+      font-size: 0.9rem;
+      color: #6c757d;
+      margin-bottom: 1.5rem;
+    }
+
+    .color-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1.25rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .color-card {
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      border: 1px solid #e9ecef;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .color-swatch { 
+      height: 95px; 
+      width: 100%; 
+    }
+
+    /* Checkerboard pattern for transparent swatch */
+    .color-swatch.swatch-transparent {
+      background-color: #fff;
+      background-image: 
+        linear-gradient(45deg, #e0e0e0 25%, transparent 25%), 
+        linear-gradient(-45deg, #e0e0e0 25%, transparent 25%), 
+        linear-gradient(45deg, transparent 75%, #e0e0e0 75%), 
+        linear-gradient(-45deg, transparent 75%, #e0e0e0 75%);
+      background-size: 16px 16px;
+      background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+    }
+
+    .color-info { padding: 0.75rem; text-align: center; }
+    .color-name { font-weight: bold; font-size: 0.95rem; margin-bottom: 0.25rem; }
+    .color-hex {
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: #495057;
+      background-color: #f1f3f5;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>CSS Colors Palette</h1>
+    <p>Complete visual guide to standard CSS colors with instant search.</p>
+    <div class="search-container">
+      <input type="text" id="searchBar" placeholder="Search by name or hex (e.g. crimson, rebeccapurple, #FF0000...)" oninput="filterColors()">
+    </div>
+    <div id="colorCount">Showing colors</div>
+  </header>
+
+  <div class="color-grid" id="colorGrid"></div>
+
+  <script>
+    const colors = [
+      // Black, White & Grays
+      { name: "black", hex: "#000000" },
+      { name: "white", hex: "#FFFFFF" },
+      { name: "gray", hex: "#808080" },
+      { name: "grey", hex: "#808080" },
+      { name: "darkgray", hex: "#A9A9A9" },
+      { name: "darkgrey", hex: "#A9A9A9" },
+      { name: "lightgray", hex: "#D3D3D3" },
+      { name: "lightgrey", hex: "#D3D3D3" },
+      { name: "dimgray", hex: "#696969" },
+      { name: "dimgrey", hex: "#696969" },
+      { name: "slategray", hex: "#708090" },
+      { name: "slategrey", hex: "#708090" },
+      { name: "darkslategray", hex: "#2F4F4F" },
+      { name: "darkslategrey", hex: "#2F4F4F" },
+      { name: "lightslategray", hex: "#778899" },
+      { name: "lightslategrey", hex: "#778899" },
+      { name: "gainsboro", hex: "#DCDCDC" },
+      { name: "silver", hex: "#C0C0C0" },
+
+      // Reds & Pinks
+      { name: "red", hex: "#FF0000" },
+      { name: "darkred", hex: "#8B0000" },
+      { name: "crimson", hex: "#DC143C" },
+      { name: "firebrick", hex: "#B22222" },
+      { name: "indianred", hex: "#CD5C5C" },
+      { name: "lightcoral", hex: "#F08080" },
+      { name: "salmon", hex: "#FA8072" },
+      { name: "darksalmon", hex: "#E9967A" },
+      { name: "lightsalmon", hex: "#FFA07A" },
+      { name: "pink", hex: "#FFC0CB" },
+      { name: "lightpink", hex: "#FFB6C1" },
+      { name: "hotpink", hex: "#FF69B4" },
+      { name: "deeppink", hex: "#FF1493" },
+      { name: "mediumvioletred", hex: "#C71585" },
+      { name: "palevioletred", hex: "#DB7093" },
+
+      // Oranges & Yellows
+      { name: "orange", hex: "#FFA500" },
+      { name: "darkorange", hex: "#FF8C00" },
+      { name: "coral", hex: "#FF7F50" },
+      { name: "tomato", hex: "#FF6347" },
+      { name: "orangered", hex: "#FF4500" },
+      { name: "gold", hex: "#FFD700" },
+      { name: "yellow", hex: "#FFFF00" },
+      { name: "lightyellow", hex: "#FFFFE0" },
+      { name: "lemonchiffon", hex: "#FFFACD" },
+      { name: "lightgoldenrodyellow", hex: "#FAFAD2" },
+      { name: "papayawhip", hex: "#FFEFD5" },
+      { name: "moccasin", hex: "#FFE4B5" },
+      { name: "peachpuff", hex: "#FFDAB9" },
+      { name: "palegoldenrod", hex: "#EEE8AA" },
+      { name: "khaki", hex: "#F0E68C" },
+      { name: "darkkhaki", hex: "#BDB76B" },
+
+      // Greens & Teals
+      { name: "green", hex: "#008000" },
+      { name: "darkgreen", hex: "#006400" },
+      { name: "lightgreen", hex: "#90EE90" },
+      { name: "forestgreen", hex: "#228B22" },
+      { name: "seagreen", hex: "#2E8B57" },
+      { name: "mediumseagreen", hex: "#3CB371" },
+      { name: "springgreen", hex: "#00FF7F" },
+      { name: "mediumspringgreen", hex: "#00FA9A" },
+      { name: "limegreen", hex: "#32CD32" },
+      { name: "lime", hex: "#00FF00" },
+      { name: "chartreuse", hex: "#7FFF00" },
+      { name: "lawngreen", hex: "#7CFC00" },
+      { name: "greenyellow", hex: "#ADFF2F" },
+      { name: "yellowgreen", hex: "#9ACD32" },
+      { name: "olive", hex: "#808000" },
+      { name: "olivedrab", hex: "#6B8E23" },
+      { name: "darkolivegreen", hex: "#556B2F" },
+      { name: "teal", hex: "#008080" },
+      { name: "darkteal", hex: "#004D40" },
+      { name: "darkcyan", hex: "#008B8B" },
+      { name: "lightseagreen", hex: "#20B2AA" },
+
+      // Blues & Cyans
+      { name: "blue", hex: "#0000FF" },
+      { name: "darkblue", hex: "#00008B" },
+      { name: "mediumblue", hex: "#0000CD" },
+      { name: "navy", hex: "#000080" },
+      { name: "midnightblue", hex: "#191970" },
+      { name: "royalblue", hex: "#4169E1" },
+      { name: "steelblue", hex: "#4682B4" },
+      { name: "lightsteelblue", hex: "#B0C4DE" },
+      { name: "cornflowerblue", hex: "#6495ED" },
+      { name: "dodgerblue", hex: "#1E90FF" },
+      { name: "deepskyblue", hex: "#00BFFF" },
+      { name: "lightskyblue", hex: "#87CEFA" },
+      { name: "skyblue", hex: "#87CEEB" },
+      { name: "cyan", hex: "#00FFFF" },
+      { name: "aqua", hex: "#00FFFF" },
+      { name: "darkturquoise", hex: "#00CED1" },
+      { name: "turquoise", hex: "#40E0D0" },
+      { name: "mediumturquoise", hex: "#48D1CC" },
+      { name: "paleturquoise", hex: "#AFEEEE" },
+      { name: "aquamarine", hex: "#7FFFD4" },
+      { name: "cadetblue", hex: "#5F9EA0" },
+      { name: "powderblue", hex: "#B0E0E6" },
+      { name: "lightblue", hex: "#ADD8E6" },
+      { name: "aliceblue", hex: "#F0F8FF" },
+
+      // Purples & Violets
+      { name: "purple", hex: "#800080" },
+      { name: "darkpurple", hex: "#301934" },
+      { name: "indigo", hex: "#4B0082" },
+      { name: "darkmagenta", hex: "#8B008B" },
+      { name: "magenta", hex: "#FF00FF" },
+      { name: "fuchsia", hex: "#FF00FF" },
+      { name: "violet", hex: "#EE82EE" },
+      { name: "darkviolet", hex: "#9400D3" },
+      { name: "darkorchid", hex: "#9932CC" },
+      { name: "mediumorchid", hex: "#BA55D3" },
+      { name: "orchid", hex: "#DA70D6" },
+      { name: "plum", hex: "#DDA0DD" },
+      { name: "thistle", hex: "#D8BFD8" },
+      { name: "lavender", hex: "#E6E6FA" },
+      { name: "blueviolet", hex: "#8A2BE2" },
+      { name: "mediumpurple", hex: "#9370DB" },
+      { name: "rebeccapurple", hex: "#663399" },
+
+      // Browns & Earth Tones
+      { name: "brown", hex: "#A52A2A" },
+      { name: "maroon", hex: "#800000" },
+      { name: "saddlebrown", hex: "#8B4513" },
+      { name: "sienna", hex: "#A0522D" },
+      { name: "chocolate", hex: "#D2691E" },
+      { name: "peru", hex: "#CD853F" },
+      { name: "sandybrown", hex: "#F4A460" },
+      { name: "burlywood", hex: "#DEB887" },
+      { name: "tan", hex: "#D2B48C" },
+      { name: "rosybrown", hex: "#BC8F8F" },
+      { name: "navajowhite", hex: "#FFDEAD" },
+      { name: "wheat", hex: "#F5DEB3" },
+      { name: "bisque", hex: "#FFE4C4" },
+      { name: "blanchedalmond", hex: "#FFEBCD" },
+      { name: "cornsilk", hex: "#FFF8DC" },
+      { name: "antiquewhite", hex: "#FAEBD7" },
+
+      // Whites & Off-Whites
+      { name: "snow", hex: "#FFFAFA" },
+      { name: "honeydew", hex: "#F0FFF0" },
+      { name: "mintcream", hex: "#F5FFFA" },
+      { name: "azure", hex: "#F0FFFF" },
+      { name: "ghostwhite", hex: "#F8F8FF" },
+      { name: "whitesmoke", hex: "#F5F5F5" },
+      { name: "seashell", hex: "#FFF5EE" },
+      { name: "beige", hex: "#F5F5DC" },
+      { name: "oldlace", hex: "#FDF5E6" },
+      { name: "floralwhite", hex: "#FFFAF0" },
+      { name: "ivory", hex: "#FFFFF0" },
+      { name: "linen", hex: "#FAF0E6" },
+      { name: "lavenderblush", hex: "#FFF0F5" },
+      { name: "mistyrose", hex: "#FFE4E1" },
+
+      // Special Keyword
+      { name: "transparent", hex: "None" }
+    ];
+
+    const grid = document.getElementById('colorGrid');
+    const countDisplay = document.getElementById('colorCount');
+
+    function displayColors(items) {
+      grid.innerHTML = '';
+      items.forEach(color => {
+        const card = document.createElement('div');
+        card.className = 'color-card';
+        
+        const isTransparent = color.name === 'transparent';
+        const swatchStyle = isTransparent ? '' : `style="background-color: ${color.name};"`;
+        const swatchClass = isTransparent ? 'color-swatch swatch-transparent' : 'color-swatch';
+
+        card.innerHTML = `
+          <div class="${swatchClass}" ${swatchStyle}></div>
+          <div class="color-info">
+            <div class="color-name">${color.name}</div>
+            <div class="color-hex">${color.hex}</div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterColors() {
+      const query = document.getElementById('searchBar').value.toLowerCase().trim();
+      const filtered = colors.filter(c => 
+        c.name.toLowerCase().includes(query) || 
+        c.hex.toLowerCase().includes(query)
+      );
+      
+      countDisplay.innerText = `Showing ${filtered.length} of ${colors.length} colors`;
+      displayColors(filtered);
+    }
+
+    // Initial render
+    countDisplay.innerText = `Showing ${colors.length} colors`;
+    displayColors(colors);
+  </script>
+
+</body>
+</html>
