@@ -77,3 +77,23 @@ h4 {
 #font-comic {
  font-family: "Comic Sans MS", cursive;
 }
+
+#font-tahoma {
+  font-family: Tahoma;
+}
+
+#font-lucida {
+  font-family: Lucida Console;
+}
+
+#font-times {
+  font-family: Times New Roman;
+}
+
+#font-trebuchet {
+  font-family: Trebuchet MS;
+}
+
+#font-verdana {
+  font-family: Verdana;
+}
