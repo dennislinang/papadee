@@ -1,7 +1,6 @@
 body {
- background-color: #000A23;
- font-size: 24px;
- color: #ffffff;
+ background-color: #0C1527;
+ color: #FFFFFF;
 }
 
 h1 {
@@ -96,4 +95,32 @@ h4 {
 
 #font-verdana {
   font-family: Verdana, Geneva, sans-serif;
+}
+
+.serif-font {
+  /*Fonts have decorative 
+  strokes or serifs.*/
+  font-family: serif;
+}
+
+.sans-serif-font {
+  /*Fonts lack decorative strokes*/
+  font-family: sans-serif;
+}
+
+.monospace-font {
+  /*Fonts have equal character spacing*/
+  font-family: monospace;
+}
+
+.cursive-font {
+  /*Fonts mimic handwriting for 
+  a personal or artistic touch.*/
+  font-family: cursive;
+}
+
+.fantasy-font {
+  /*Decorative or unique fonts
+  not fitting other categories*/
+  font-family: fantasy;
 }
